@@ -3,7 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { UserService } from '../../user/user.service';
 import { Request } from 'express';
-import { AuthService } from '../auth.service';
+import { ConfigService } from '@nestjs/config';
 
 export interface JwtPayload {
   id: string;
@@ -14,26 +14,18 @@ export interface JwtPayload {
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
-    private readonly userService: UserService
+    private readonly userService: UserService,
+    private readonly configService: ConfigService,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: process.env.JWT_SECRET,
+      secretOrKey: configService.get<string>('JWT_SECRET'),
       passReqToCallback: true,
     });
   }
 
   async validate(req: Request, payload: JwtPayload): Promise<any> {
-    const authHeader = req.headers['authorization'];
-    const token = authHeader?.split(' ')[1];
-
-    if (!token) {
-      throw new UnauthorizedException('Không tìm thấy token');
-    }
-
-    console.log('JwtStrategy.validate:', payload);
-
     const user = await this.userService.findOne({ id: payload.id });
 
     if (!user) {

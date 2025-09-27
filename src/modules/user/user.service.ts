@@ -19,6 +19,14 @@ export class UserService {
     return this.userRepository.save(user);
   }
 
+  async createAdmin(dto: CreateUserDto): Promise<UserEntity> {
+    const admin = this.userRepository.create({
+      ...dto,
+      role: UserRoleType.ADMIN,
+    });
+    return this.userRepository.save(admin);
+  }
+
   async findOne(where: any): Promise<UserEntity> {
     return this.userRepository.findOne({ where });
   }

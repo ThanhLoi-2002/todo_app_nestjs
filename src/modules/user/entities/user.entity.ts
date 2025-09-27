@@ -3,8 +3,8 @@ import * as bcrypt from 'bcrypt';
 import { TodoEntity } from 'src/modules/todo/entities/todo.entity';
 
 export enum UserRoleType {
-  ADMIN = 'admin',
-  USER = 'user',
+  ADMIN = 'ADMIN',
+  USER = 'USER',
 }
 
 @Entity()

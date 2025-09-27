@@ -28,7 +28,7 @@ export class AuthService {
     return null;
   }
 
-  async login(loginDto: LoginDto): Promise<string> {
+  async login(loginDto: LoginDto): Promise<any> {
     const user = await this.validateUser(loginDto.username, loginDto.password);
 
     if (!user) {
@@ -45,7 +45,7 @@ export class AuthService {
     // Generate tokens
     const accessToken = this.jwtService.sign(payload);
     this.logger.log(`User login: ${loginDto.username}`);
-    return accessToken;
+    return { accessToken };
   }
 
   async register(registerDto: RegisterDto): Promise<UserEntity> {
@@ -57,6 +57,18 @@ export class AuthService {
     }
 
     const user = await this.userService.create(registerDto);
+    return user;
+  }
+
+  async createAdmin(registerDto: RegisterDto): Promise<UserEntity> {
+    const data = await this.userService.findOne({
+      username: registerDto.username,
+    });
+    if (data) {
+      throw new BadRequestException('Username đã tồn tại!');
+    }
+
+    const user = await this.userService.createAdmin(registerDto);
     return user;
   }
 }

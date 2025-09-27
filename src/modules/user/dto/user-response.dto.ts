@@ -12,9 +12,6 @@ export class UserResponseDto {
   @Expose()
   role: UserRoleType;
 
-  @Expose()
-  createdAt?: Date;
-
   constructor(partial: Partial<UserEntity>) {
     Object.assign(this, partial);
   }
